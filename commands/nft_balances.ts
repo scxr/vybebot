@@ -14,7 +14,7 @@ const defaultConfig: NftConfig = {
     walletAddresses: [],
     showUnknownNfts: true,
     limit: 100,
-    sortBy: null,
+    sortBy: 'value',
     sortOrder: 'desc'
 };
 
@@ -42,20 +42,20 @@ export async function getNftBalances(ctx: Context, step: string | null) {
             reply_markup: {
                 inline_keyboard: [
                     [
-                        {text: "Add wallet address", callback_data: "add_address"},
-                        {text: "Clear wallets", callback_data: "clear_addresses"}
+                        {text: "Add wallet address", callback_data: "nft_add_address"},
+                        {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                     ],
                     [
-                        {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                        {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                        {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                        {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                     ],
                     [
-                        {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                        {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                        {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                        {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                        {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                        {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                     ],
                     [
-                        {text: "🔍 Search", callback_data: "search_nfts"},
+                        {text: "🔍 Search", callback_data: "nft_search"},
                     ]
                 ]
             }
@@ -108,20 +108,20 @@ export async function handleTextMessage(ctx: Context) {
                     reply_markup: {
                         inline_keyboard: [
                             [
-                                {text: "Add wallet address", callback_data: "add_address"},
-                                {text: "Clear wallets", callback_data: "clear_addresses"}
+                                {text: "Add wallet address", callback_data: "nft_add_address"},
+                                {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                             ],
                             [
-                                {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                             ],
                             [
-                                {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                             ],
                             [
-                                {text: "🔍 Search", callback_data: "search_nfts"},
+                                {text: "🔍 Search", callback_data: "nft_search"},
                             ]
                         ]
                     }
@@ -158,7 +158,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
     if (!userId) return;
 
     switch (callbackData) {
-        case "add_address":
+        case "nft_add_address":
             const addressMsg = await ctx.reply("Please enter a wallet address:", {
                 reply_markup: {
                     force_reply: true
@@ -173,7 +173,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
             
-        case "clear_addresses":
+        case "nft_clear_addresses":
             defaultConfig.walletAddresses = [];
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
@@ -183,20 +183,20 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Add wallet address", callback_data: "add_address"},
-                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                    {text: "Add wallet address", callback_data: "nft_add_address"},
+                                    {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                                 ],
                                 [
-                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                                 ],
                                 [
-                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                                 ],
                                 [
-                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                    {text: "🔍 Search", callback_data: "nft_search"},
                                 ]
                             ]
                         }
@@ -205,7 +205,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
             
-        case "toggle_unknown_nfts":
+        case "nft_toggle_unknown_nfts":
             defaultConfig.showUnknownNfts = !defaultConfig.showUnknownNfts;
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
@@ -215,20 +215,20 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Add wallet address", callback_data: "add_address"},
-                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                    {text: "Add wallet address", callback_data: "nft_add_address"},
+                                    {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                                 ],
                                 [
-                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                                 ],
                                 [
-                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                                 ],
                                 [
-                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                    {text: "🔍 Search", callback_data: "nft_search"},
                                 ]
                             ]
                         }
@@ -237,7 +237,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
             
-        case "edit_limit":
+        case "nft_edit_limit":
             const limitMsg = await ctx.reply("Enter a new limit (1-1000):", {
                 reply_markup: {
                     force_reply: true
@@ -252,7 +252,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
 
-        case "sort_value":
+        case "nft_sort_value":
             defaultConfig.sortBy = 'value';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
@@ -262,20 +262,20 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Add wallet address", callback_data: "add_address"},
-                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                    {text: "Add wallet address", callback_data: "nft_add_address"},
+                                    {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                                 ],
                                 [
-                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                                 ],
                                 [
-                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                                 ],
                                 [
-                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                    {text: "🔍 Search", callback_data: "nft_search"},
                                 ]
                             ]
                         }
@@ -284,7 +284,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
 
-        case "sort_price":
+        case "nft_sort_price":
             defaultConfig.sortBy = 'price';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
@@ -294,20 +294,20 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Add wallet address", callback_data: "add_address"},
-                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                    {text: "Add wallet address", callback_data: "nft_add_address"},
+                                    {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                                 ],
                                 [
-                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                                 ],
                                 [
-                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                                 ],
                                 [
-                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                    {text: "🔍 Search", callback_data: "nft_search"},
                                 ]
                             ]
                         }
@@ -316,7 +316,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
 
-        case "toggle_order":
+        case "nft_toggle_order":
             defaultConfig.sortOrder = defaultConfig.sortOrder === 'asc' ? 'desc' : 'asc';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
@@ -326,20 +326,20 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Add wallet address", callback_data: "add_address"},
-                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                    {text: "Add wallet address", callback_data: "nft_add_address"},
+                                    {text: "Clear wallets", callback_data: "nft_clear_addresses"}
                                 ],
                                 [
-                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
-                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "nft_toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "nft_edit_limit"}
                                 ],
                                 [
-                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
-                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
-                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "nft_sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "nft_sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "nft_toggle_order"}
                                 ],
                                 [
-                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                    {text: "🔍 Search", callback_data: "nft_search"},
                                 ]
                             ]
                         }
@@ -348,7 +348,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
             
-        case "search_nfts":
+        case "nft_search":
             if (defaultConfig.walletAddresses.length === 0) {
                 await ctx.reply("Please add at least one wallet address first!");
                 return;

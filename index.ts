@@ -1,32 +1,39 @@
-import { Telegraf, Context } from 'telegraf';
-import dotenv from 'dotenv';
-import { getNftBalances, handleNftCallback, handleTextMessage } from './commands/nft_balances';
+import { Telegraf } from "telegraf";
+import { getNftBalances, handleNftCallback, handleTextMessage as handleNftTextMessage } from "./commands/nft_balances";
+import { getPnl, handlePnlCallback, handleTextMessage as handlePnlTextMessage } from "./commands/pnl";
+import dotenv from "dotenv";
 
 dotenv.config();
 
-const bot = new Telegraf(process.env.BOT_TOKEN || '');
+const bot = new Telegraf(process.env.BOT_TOKEN || "");
 
-bot.command('hello', async (ctx) => {
-    await ctx.reply('vybing');
+bot.command("hello", (ctx) => {
+    ctx.reply("Hello! Welcome to Vybe Bot!");
 });
 
-bot.command('start', async (ctx) => {
-    await ctx.reply('Welcome! Use /hello to get a greeting or /nft to check NFT balances.');
+bot.command("nft", (ctx) => {
+    getNftBalances(ctx, null);
 });
 
-bot.command('nft', async (ctx) => {
-    await getNftBalances(ctx, null);
+bot.command("pnl", (ctx) => {
+    getPnl(ctx, null);
 });
 
-bot.action(/.*/, async (ctx) => {
+bot.on("text", async (ctx) => {
+    await handleNftTextMessage(ctx);
+    await handlePnlTextMessage(ctx);
+});
+
+bot.on("callback_query", async (ctx) => {
     if ('data' in ctx.callbackQuery) {
-        await handleNftCallback(ctx, ctx.callbackQuery.data);
+        const callbackData = ctx.callbackQuery.data;
+        if (callbackData.startsWith("nft_")) {
+            await handleNftCallback(ctx, callbackData);
+        } else if (callbackData.startsWith("pnl_")) {
+            await handlePnlCallback(ctx, callbackData);
+        }
         await ctx.answerCbQuery();
     }
-});
-
-bot.on('text', async (ctx) => {
-    await handleTextMessage(ctx);
 });
 
 bot.launch();
