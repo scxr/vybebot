@@ -7,6 +7,14 @@ export interface NftBalance {
     data: Nft[]
 }
 
+export interface NftBalanceMultiWallet {
+    date: number,
+    ownerAddresses: string[],
+    totalSol: string,
+    totalUsd: string,
+    totalNftCollectionCount: number,
+    data: Nft[]
+}
 export interface Nft {
     name: string | null,
     collectionAddress: string,

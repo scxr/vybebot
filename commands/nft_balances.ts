@@ -1,9 +1,9 @@
 import { Context } from "telegraf";
-import { getNftBalancesFromApi } from "../functions/nftBalances";
-import { NftBalance } from "../types/ApiResponses";
+import { getNftBalancesFromApi, getNftBalancesFromApiMultiWallet     } from "../functions/nftBalances";
+import { NftBalance, NftBalanceMultiWallet } from "../types/ApiResponses";
 
 interface NftConfig {
-    walletAddress: string;
+    walletAddresses: string[];
     showUnknownNfts: boolean;
     limit: number;
     sortBy: 'value' | 'price' | null;
@@ -11,27 +11,39 @@ interface NftConfig {
 }
 
 const defaultConfig: NftConfig = {
-    walletAddress: "",
+    walletAddresses: [],
     showUnknownNfts: true,
     limit: 100,
     sortBy: null,
     sortOrder: 'desc'
 };
 
+const waitingForInput = new Map<number, { type: 'address' | 'limit', messageId: number, originalMessageId: number }>();
+
 function isSortBy(value: string | null): value is 'value' | 'price' {
     return value === 'value' || value === 'price';
 }
 
-const waitingForInput = new Map<number, { type: 'address' | 'limit', messageId: number, originalMessageId: number }>();
+// Helper to format wallet addresses for display
+function formatWalletAddresses(): string {
+    if (defaultConfig.walletAddresses.length === 0) {
+        return "Not set";
+    } else if (defaultConfig.walletAddresses.length === 1) {
+        return defaultConfig.walletAddresses[0];
+    } else {
+        return `${defaultConfig.walletAddresses.length} wallets`;
+    }
+}
 
 export async function getNftBalances(ctx: Context, step: string | null) {
     if (step === null) {
-        await ctx.reply(`__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`, {
+        await ctx.reply(`__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`, {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
                     [
-                        {text: "Edit wallet address", callback_data: "edit_address"}
+                        {text: "Add wallet address", callback_data: "add_address"},
+                        {text: "Clear wallets", callback_data: "clear_addresses"}
                     ],
                     [
                         {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -74,7 +86,7 @@ export async function handleTextMessage(ctx: Context) {
     }
 
     if (waiting.type === 'address') {
-        defaultConfig.walletAddress = text;
+        defaultConfig.walletAddresses.push(text);
     } else if (waiting.type === 'limit') {
         const newLimit = parseInt(text);
         if (isNaN(newLimit) || newLimit < 1 || newLimit > 1000) {
@@ -90,13 +102,14 @@ export async function handleTextMessage(ctx: Context) {
                 ctx.chat.id,
                 waiting.originalMessageId,
                 undefined,
-                `__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`,
+                `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
                 {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
                             [
-                                {text: "Edit wallet address", callback_data: "edit_address"}
+                                {text: "Add wallet address", callback_data: "add_address"},
+                                {text: "Clear wallets", callback_data: "clear_addresses"}
                             ],
                             [
                                 {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -122,12 +135,30 @@ export async function handleTextMessage(ctx: Context) {
     waitingForInput.delete(userId);
 }
 
+async function handleMultiWalletSearch(ctx: Context) {
+    let data = await getNftBalancesFromApiMultiWallet(defaultConfig.walletAddresses, defaultConfig.showUnknownNfts, defaultConfig.limit, 0, defaultConfig.sortOrder, defaultConfig.sortBy ?? 'valueUsd');
+    console.log(data);
+
+    let nftList = buildMultiWalletList(data as NftBalanceMultiWallet);
+
+    await ctx.reply(`Multi-wallet search with configuration:\n\n` +
+        `Wallets: ${defaultConfig.walletAddresses.join(', ')}\n` +
+        `Show Unknown NFTs: ${defaultConfig.showUnknownNfts}\n` +
+        `Limit: ${defaultConfig.limit}\n` +
+        `Sort by: ${defaultConfig.sortBy || 'None'}\n` +
+        `Order: ${defaultConfig.sortOrder.toUpperCase()}`);
+
+    await ctx.reply(nftList, {
+        parse_mode: "HTML",
+    });
+}
+
 export async function handleNftCallback(ctx: Context, callbackData: string) {
     const userId = ctx.from?.id;
     if (!userId) return;
 
     switch (callbackData) {
-        case "edit_address":
+        case "add_address":
             const addressMsg = await ctx.reply("Please enter a wallet address:", {
                 reply_markup: {
                     force_reply: true
@@ -142,17 +173,50 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             }
             break;
             
-        case "toggle_unknown_nfts":
-            defaultConfig.showUnknownNfts = !defaultConfig.showUnknownNfts;
+        case "clear_addresses":
+            defaultConfig.walletAddresses = [];
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
-                    `__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`,
+                    `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
                     {
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Edit wallet address", callback_data: "edit_address"}
+                                    {text: "Add wallet address", callback_data: "add_address"},
+                                    {text: "Clear wallets", callback_data: "clear_addresses"}
+                                ],
+                                [
+                                    {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
+                                    {text: `Limit: ${defaultConfig.limit}`, callback_data: "edit_limit"}
+                                ],
+                                [
+                                    {text: `${(defaultConfig.sortBy as string) === 'value' ? '✅' : ''} Value`, callback_data: "sort_value"},
+                                    {text: `${(defaultConfig.sortBy as string) === 'price' ? '✅' : ''} Price`, callback_data: "sort_price"},
+                                    {text: `${defaultConfig.sortOrder === 'asc' ? '↑' : '↓'}`, callback_data: "toggle_order"}
+                                ],
+                                [
+                                    {text: "🔍 Search", callback_data: "search_nfts"},
+                                ]
+                            ]
+                        }
+                    }
+                );
+            }
+            break;
+            
+        case "toggle_unknown_nfts":
+            defaultConfig.showUnknownNfts = !defaultConfig.showUnknownNfts;
+            if (ctx.callbackQuery?.message) {
+                await ctx.editMessageText(
+                    `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
+                    {
+                        parse_mode: "Markdown",
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    {text: "Add wallet address", callback_data: "add_address"},
+                                    {text: "Clear wallets", callback_data: "clear_addresses"}
                                 ],
                                 [
                                     {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -192,13 +256,14 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             defaultConfig.sortBy = 'value';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
-                    `__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`,
+                    `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
                     {
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Edit wallet address", callback_data: "edit_address"}
+                                    {text: "Add wallet address", callback_data: "add_address"},
+                                    {text: "Clear wallets", callback_data: "clear_addresses"}
                                 ],
                                 [
                                     {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -223,13 +288,14 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             defaultConfig.sortBy = 'price';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
-                    `__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`,
+                    `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
                     {
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Edit wallet address", callback_data: "edit_address"}
+                                    {text: "Add wallet address", callback_data: "add_address"},
+                                    {text: "Clear wallets", callback_data: "clear_addresses"}
                                 ],
                                 [
                                     {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -254,13 +320,14 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             defaultConfig.sortOrder = defaultConfig.sortOrder === 'asc' ? 'desc' : 'asc';
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
-                    `__NFT Balance lookup__\n\nWallet address: ${defaultConfig.walletAddress || "Not set"}`,
+                    `__NFT Balance lookup__\n\nWallet address: ${formatWalletAddresses()}`,
                     {
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: "Edit wallet address", callback_data: "edit_address"}
+                                    {text: "Add wallet address", callback_data: "add_address"},
+                                    {text: "Clear wallets", callback_data: "clear_addresses"}
                                 ],
                                 [
                                     {text: `${defaultConfig.showUnknownNfts ? "✅" : "❌"} Unknown NFTs`, callback_data: "toggle_unknown_nfts"},
@@ -282,18 +349,23 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
             break;
             
         case "search_nfts":
-            if (!defaultConfig.walletAddress) {
-                await ctx.reply("Please set a wallet address first!");
+            if (defaultConfig.walletAddresses.length === 0) {
+                await ctx.reply("Please add at least one wallet address first!");
                 return;
             }
 
-            let data = await getNftBalancesFromApi(defaultConfig.walletAddress, defaultConfig.showUnknownNfts, defaultConfig.limit, 0, defaultConfig.sortOrder, defaultConfig.sortBy ?? 'valueUsd');
+            if (defaultConfig.walletAddresses.length > 1) {
+                await handleMultiWalletSearch(ctx);
+                return;
+            }
+
+            let data = await getNftBalancesFromApi(defaultConfig.walletAddresses[0], defaultConfig.showUnknownNfts, defaultConfig.limit, 0, defaultConfig.sortOrder, defaultConfig.sortBy ?? 'valueUsd');
             console.log(data);      
 
             let nftList = buildNftList(data as NftBalance);
                 
             await ctx.reply(`Searching NFTs with current configuration:\n\n` +
-                `Wallet: ${defaultConfig.walletAddress}\n` +
+                `Wallet: ${defaultConfig.walletAddresses[0]}\n` +
                 `Show Unknown NFTs: ${defaultConfig.showUnknownNfts}\n` +
                 `Limit: ${defaultConfig.limit}\n` +
                 `Sort by: ${defaultConfig.sortBy || 'None'}\n` +
@@ -309,7 +381,7 @@ export async function handleNftCallback(ctx: Context, callbackData: string) {
 
 function buildNftList(data: NftBalance) {
     let nftList = "";
-
+    
     nftList += `<u>NFT Portfolio</u>
 
 <code>${data.ownerAddress}</code>
@@ -319,6 +391,29 @@ function buildNftList(data: NftBalance) {
 `;
     for (let nft of data.data) {
         nftList += `
+<b>${nft.name ?? "Unknown"}</b>
+<code>${nft.collectionAddress}</code>
+<b>Value:</b> <code>${parseFloat(nft.valueSol).toFixed(2) ?? "0.00"} SOL</code> (${parseFloat(nft.valueUsd).toFixed(2) ?? "0.00"} USD)
+<b>Holdings:</b> <code>${nft.totalItems}</code>
+`;
+    }
+
+    return nftList;
+}
+
+function buildMultiWalletList(data: NftBalanceMultiWallet) {
+    let nftList = "";
+
+    nftList += `<u>NFT Portfolio</u>
+
+<code>${data.ownerAddresses.join(', ')}</code>
+
+<b>Value:</b> <code>${parseFloat(data.totalSol).toFixed(2) ?? "0.00"} SOL</code> (${parseFloat(data.totalUsd).toFixed(2) ?? "0.00"} USD)
+<b>Collections found:</b> ${data.totalNftCollectionCount}
+`;
+
+    for (let nft of data.data) {
+         nftList += `
 <b>${nft.name ?? "Unknown"}</b>
 <code>${nft.collectionAddress}</code>
 <b>Value:</b> <code>${parseFloat(nft.valueSol).toFixed(2) ?? "0.00"} SOL</code> (${parseFloat(nft.valueUsd).toFixed(2) ?? "0.00"} USD)
