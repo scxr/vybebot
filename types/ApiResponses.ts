@@ -127,3 +127,25 @@ export interface PnlTokenMetric {
         transactionCount: number,
     }
 }
+
+export interface TokenBalanceTs {
+    ownerAddress: string,
+    data: {
+        blockTime: number;
+        stakeValue: string;
+        stakeValueSol: string;
+        systemValue: string;
+        tokenValue: string;
+    }[];
+}
+
+export interface TokenBalanceTsMultiWallet {
+    ownerAddresses: string[],
+    data: {
+        blockTime: number;
+        stakeValue: string;
+        stakeValueSol: string;
+        systemValue: string;
+        tokenValue: string;
+    }[];
+}

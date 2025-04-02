@@ -1,6 +1,7 @@
 import { Telegraf } from "telegraf";
 import { getNftBalances, handleNftCallback, handleTextMessage as handleNftTextMessage } from "./commands/nft_balances";
 import { getPnl, handlePnlCallback, handleTextMessage as handlePnlTextMessage } from "./commands/pnl";
+import { getTokenBalances, handleTokenBalancesCallback, handleTextMessage as handleTokenBalancesTextMessage } from "./commands/tstokens";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -19,9 +20,14 @@ bot.command("pnl", (ctx) => {
     getPnl(ctx, null);
 });
 
+bot.command("tstokens", (ctx) => {
+    getTokenBalances(ctx, null);
+});
+
 bot.on("text", async (ctx) => {
     await handleNftTextMessage(ctx);
     await handlePnlTextMessage(ctx);
+    await handleTokenBalancesTextMessage(ctx);
 });
 
 bot.on("callback_query", async (ctx) => {
@@ -31,6 +37,8 @@ bot.on("callback_query", async (ctx) => {
             await handleNftCallback(ctx, callbackData);
         } else if (callbackData.startsWith("pnl_")) {
             await handlePnlCallback(ctx, callbackData);
+        } else if (callbackData.startsWith("tstokens_")) {
+            await handleTokenBalancesCallback(ctx, callbackData);
         }
         await ctx.answerCbQuery();
     }

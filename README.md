@@ -22,9 +22,9 @@ This project was created using `bun init` in bun v1.0.0. [Bun](https://bun.sh) i
 - [x] NFT Balance for multiple wallets
 - [ ] Search known accounts
 - [x] A wallets PNL
-- [ ] Token balances by time period
+- [x] Token balances by time period
 - [ ] Token balances now
-- [ ] Token balances by time period (multi wallet)
+- [x] Token balances by time period (multi wallet)
 - [ ] Token balances now (multi wallet)
 - [ ] NFT Collection owners
 
