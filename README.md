@@ -30,16 +30,12 @@ This project was created using `bun init` in bun v1.0.0. [Bun](https://bun.sh) i
 
 ### Prices
 
-- [ ] Get Markets
-- [ ] DEX-AMM
-- [ ] Pyth Accounts
+Convert the following endpoints into charting commands
+
 - [ ] Pair-OHLCV
 - [ ] Market-OHLCV
 - [ ] Token-OHLCV
-- [ ] Pyth Price
-- [ ] Pyth Price OHLC
-- [ ] Pyth Price: Time Series
-- [ ] Pyth Product
+
 
 ### Programs
 

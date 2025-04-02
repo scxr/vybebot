@@ -1,15 +1,21 @@
 {
-  "name": "vybe",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "bun-types": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "name": "chart-generator",
+  "version": "1.0.0",
+  "description": "OHLCV chart generator",
+  "main": "chart_generator.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node chart_generator.ts"
   },
   "dependencies": {
+    "canvas": "next",
     "dotenv": "^16.4.7",
     "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.8",
+    "@types/node": "^20.11.19",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }
