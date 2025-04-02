@@ -149,3 +149,53 @@ export interface TokenBalanceTsMultiWallet {
         tokenValue: string;
     }[];
 }
+
+export interface TokenBalance {
+    ownerAddress: string;
+    totalTokenValueUsd: string;
+    totalTokenValueUsd1dChange: string;
+    totalTokenCount: number;
+    stakedSolBalance: string;
+    stakedSolBalanceUsd: string;
+    activeStakedSolBalance: string;
+    activeStakedSolBalanceUsd: string;
+    data: TokenBalanceData[];
+}
+
+export interface TokenBalanceData {
+    amount: string;
+    category: string;
+    decimals: number;
+    logoUrl: string;
+    mintAddress: string;
+    name: string;
+    priceUsd: string;
+    priceUsd1dChange: string;
+    priceUsd7dTrend: string;
+    slot: number;
+    symbol: string;
+    valueUsd: string;
+    valueUsd1dChange: string;
+    verified: boolean;
+}
+
+export interface TokenBalanceMultiWallet {
+    ownerAddresses: string[];
+    totalTokenValueUsd: string;
+    totalTokenValueUsd1dChange: string;
+    totalTokenCount: number;
+    stakedSolBalance: string;
+    stakedSolBalanceUsd: string;
+    activeStakedSolBalance: string;
+    activeStakedSolBalanceUsd: string;
+    data: TokenBalanceData[];
+}
+
+export interface NftHolder {
+    owner: string;
+    amount: number;
+}
+
+export interface NftHolderResponse {
+    data: NftHolder[];
+}
