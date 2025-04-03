@@ -34,7 +34,7 @@ Convert the following endpoints into charting commands
 
 - [ ] Pair-OHLCV
 - [ ] Market-OHLCV
-- [ ] Token-OHLCV
+- [x] Token-OHLCV
 
 
 ### Programs

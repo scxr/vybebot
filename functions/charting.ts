@@ -1,7 +1,23 @@
 import { createCanvas } from 'canvas';
 
-async function getOhclvData(token: string) {
+async function getOhclvData(
+    token: string,
+    resolution: string = "1d",
+    timeStart?: number,
+    timeEnd?: number,
+    limit: number = 1000
+) {
     let url = `https://api.vybenetwork.xyz/price/${token}/token-ohlcv`;
+    
+    // Build query parameters
+    const params = new URLSearchParams();
+    params.append('resolution', resolution);
+    if (timeStart) params.append('timeStart', timeStart.toString());
+    if (timeEnd) params.append('timeEnd', timeEnd.toString());
+    params.append('limit', limit.toString());
+    
+    url += `?${params.toString()}`;
+    
     let response = await fetch(url, {
         headers: {
             'x-api-key': `${process.env.VYBE_API_KEY}`,
@@ -9,7 +25,9 @@ async function getOhclvData(token: string) {
             'Accept': 'application/json'
         }   
     });
+    console.log(response);
     let data = await response.json();
+    console.log(data);
     // Convert string values to numbers and sort by timestamp
     const processedData = data.data
         .map((d: any) => ({
@@ -134,7 +152,7 @@ function drawCryptoChart(data: any[], width: number, height: number, t1: string 
         ctx.fillStyle = '#787b86';
         ctx.font = '14px Arial';
         ctx.textAlign = 'left';
-        ctx.fillText(`${t1}/${t2} • ${aggregate}${timeUnit}`, margin.left, margin.top - 15);
+        ctx.fillText(`${t1}/${t2} • ${timeUnit}`, margin.left, margin.top - 15);
         
         // Add volume label
         const currentVolume = data[data.length - 1].volume;
@@ -148,12 +166,19 @@ function drawCryptoChart(data: any[], width: number, height: number, t1: string 
     }
 }
 
-async function createAndSaveChart(token: string, outputPath: string = 'chart.png'): Promise<void> {
-    // Get OHLCV data
-    const data = await getOhclvData(token);
+async function createAndSaveChart(
+    token: string,
+    resolution: string = "1d",
+    timeStart?: number,
+    timeEnd?: number,
+    limit: number = 1000,
+    outputPath: string = 'chart.png'
+): Promise<string> {
+    // Get OHLCV data with parameters
+    const data = await getOhclvData(token, resolution, timeStart, timeEnd, limit);
     
     // Create the chart
-    const canvas = drawCryptoChart(data, 1500, 800, token, "USDC", "h", "1");
+    const canvas = drawCryptoChart(data, 1500, 800, token, "WSOL", resolution, "1");
     
     if (!canvas) {
         throw new Error('Failed to create chart');
@@ -162,13 +187,14 @@ async function createAndSaveChart(token: string, outputPath: string = 'chart.png
     // Save the chart
     const buffer = canvas.toBuffer('image/png');
     await Bun.write(outputPath, buffer);
+    return outputPath;
 }
 
 // Example usage
-createAndSaveChart("4TBi66vi32S7J8X1A6eWfaLHYmUXu7CStcEmsJQdpump").then(() => {
-    console.log('Chart saved successfully!');
-}).catch(error => {
-    console.error('Error creating chart:', error);
-});
+// createAndSaveChart("4TBi66vi32S7J8X1A6eWfaLHYmUXu7CStcEmsJQdpump").then(() => {
+//     console.log('Chart saved successfully!');
+// }).catch(error => {
+//     console.error('Error creating chart:', error);
+// });
 
 export { getOhclvData, createAndSaveChart };

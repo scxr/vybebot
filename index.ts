@@ -3,6 +3,7 @@ import { getNftBalances, handleNftCallback, handleTextMessage as handleNftTextMe
 import { getPnl, handlePnlCallback, handleTextMessage as handlePnlTextMessage } from "./commands/pnl";
 import { getTokenBalances, handleTokenBalancesCallback, handleTextMessage as handleTokenBalancesTextMessage } from "./commands/token_balances";
 import { getNftHolders, handleNftHoldersCallback, handleTextMessage as handleNftHoldersTextMessage } from "./commands/nft_holders";
+import { handleChartCommand, handleChartCallback, handleTextMessage as handleChartTextMessage } from "./commands/chart";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -29,11 +30,16 @@ bot.command("nft_holders", (ctx) => {
     getNftHolders(ctx, null);
 });
 
+bot.command("chart", (ctx) => {
+    handleChartCommand(ctx, ctx.message.text.split(" "));
+});
+
 bot.on("text", async (ctx) => {
     await handleNftTextMessage(ctx);
     await handlePnlTextMessage(ctx);
     await handleTokenBalancesTextMessage(ctx);
     await handleNftHoldersTextMessage(ctx);
+    await handleChartTextMessage(ctx);
 });
 
 bot.on("callback_query", async (ctx) => {
@@ -52,6 +58,8 @@ bot.on("callback_query", async (ctx) => {
             } else if (callbackData.startsWith("nft_holders_")) {
                 console.log("nft_holders_callback");
                 await handleNftHoldersCallback(ctx, callbackData);
+            } else if (callbackData.startsWith("chart_")) {
+                await handleChartCallback(ctx, callbackData);
             }
             await ctx.answerCbQuery();
         } catch (error) {
