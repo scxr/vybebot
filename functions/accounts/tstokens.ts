@@ -1,4 +1,4 @@
-import { TokenBalanceTs, TokenBalanceTsMultiWallet } from "../types/ApiResponses";
+import { TokenBalanceTs, TokenBalanceTsMultiWallet } from "../../types/ApiResponses";
 
 export async function getTokenBalancesFromApi(
     ownerAddress: string,

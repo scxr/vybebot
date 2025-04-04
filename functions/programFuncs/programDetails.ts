@@ -1,4 +1,4 @@
-import { ProgramDetails } from "../types/ApiResponses"
+import { ProgramDetails } from "../../types/ApiResponses"
 
 
 export async function getProgramDetails(programId: string): Promise<ProgramDetails> {

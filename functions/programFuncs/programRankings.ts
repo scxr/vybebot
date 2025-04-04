@@ -1,4 +1,4 @@
-import { ProgramRanking } from "../types/ApiResponses"
+import { ProgramRanking } from "../../types/ApiResponses"
 
 export async function getProgramRankings(interval: string | null, date: number | null): Promise<ProgramRanking> {
     let url = ""

@@ -1,4 +1,4 @@
-import { PnlData } from "../types/ApiResponses";
+import { PnlData } from "../../types/ApiResponses";
 
 export async function getPnlFromApi(
     ownerAddress: string,

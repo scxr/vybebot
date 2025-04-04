@@ -1,4 +1,4 @@
-import { ProgramTvl } from "../types/ApiResponses"
+import { ProgramTvl } from "../../types/ApiResponses"
 
 const allowedResolutions = ["1d", "7d", "30d", "90d", "180d", "365d"]
 

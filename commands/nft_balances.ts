@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { getNftBalancesFromApi, getNftBalancesFromApiMultiWallet     } from "../functions/nftBalances";
+import { getNftBalancesFromApi, getNftBalancesFromApiMultiWallet     } from "../functions/accounts/nftBalances";
 import { NftBalance, NftBalanceMultiWallet } from "../types/ApiResponses";
 
 interface NftConfig {

@@ -1,4 +1,4 @@
-import { NftHolderResponse } from "../types/ApiResponses";
+import { NftHolderResponse } from "../../types/ApiResponses";
 
 export async function getNftHoldersFromApi(collectionAddress: string): Promise<NftHolderResponse> {
     const url = new URL(`https://api.vybenetwork.xyz/nft/collection-owners/${collectionAddress}`);

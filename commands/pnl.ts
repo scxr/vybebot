@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { getPnlFromApi } from "../functions/pnl.ts";
+import { getPnlFromApi } from "../functions/accounts/pnl.js";
 import { PnlData } from "../types/ApiResponses";
 
 interface PnlConfig {

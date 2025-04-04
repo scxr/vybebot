@@ -40,7 +40,7 @@ Convert the following endpoints into charting commands
 ### Programs
 
 - [ ] Known Program Accounts
-    - [ ] Backend function
+    - [x] Backend function
 - [ ] Ranking
     - [x] Backend function
 - [ ] Programs Details
@@ -48,15 +48,15 @@ Convert the following endpoints into charting commands
 - [ ] Program Active Users
     - [x] Backend function
 - [ ] Active Users: Time Series
-    - [ ] Backend function
+    - [x] Backend function
 - [ ] Instruction Count: Time Series
-    - [ ] Backend function
+    - [x] Backend function
 - [ ] Transaction Count: Time Series
-    - [ ] Backend function
+    - [x] Backend function
 - [ ] Program TVL
     - [x] Backend function
 - [ ] Programs List
-    - [ ] Backend function
+    - [x] Backend function
 
 ### Tokens
 

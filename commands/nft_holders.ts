@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { getNftHoldersFromApi } from "../functions/nftHolders";
+import { getNftHoldersFromApi } from "../functions/accounts/nftHolders";
 import { NftHolderResponse } from "../types/ApiResponses";
 
 interface NftHolderConfig {

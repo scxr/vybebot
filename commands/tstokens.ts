@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { getTokenBalancesFromApi, getTokenBalancesFromApiMultiWallet } from "../functions/tstokens.ts";
+import { getTokenBalancesFromApi, getTokenBalancesFromApiMultiWallet } from "../functions/accounts/tstokens.js";
 import { TokenBalanceTs, TokenBalanceTsMultiWallet } from "../types/ApiResponses";
 
 interface TokenBalanceConfig {
