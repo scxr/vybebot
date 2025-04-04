@@ -199,3 +199,39 @@ export interface NftHolder {
 export interface NftHolderResponse {
     data: NftHolder[];
 }
+
+export interface ProgramDetails {
+    dau: number;
+    entityName: string | null; 
+    friendlyName: string | null;
+    idlUrl: string | null;
+    instructions1d: number | null;
+    labels: string[] | null;
+    logoUrl: string | null;
+    name: string | null;
+    newUsersChange1d: number | null;
+    programDescription: string | null;
+    programDetail: string | null;
+    programId: string;
+    transactions1d: number | null;
+}
+
+export interface ProgramRanking {
+    data: ProgramRankingData[]
+}
+
+export interface ProgramRankingData {
+    programId: string;
+    programName: string;
+    programRank: number;
+    score: number;
+}
+
+export interface ProgramTvlDatapoint {
+    time: number;
+    tvl: string;
+}
+
+export interface ProgramTvl {
+    data: ProgramTvlDatapoint[];
+}
