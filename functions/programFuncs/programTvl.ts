@@ -1,6 +1,6 @@
 import { ProgramTvl } from "../../types/ApiResponses"
 
-const allowedResolutions = ["1d", "7d", "30d", "90d", "180d", "365d"]
+const allowedResolutions = ["1h", "6h", "12h", "1d", "7d", "30d", "90d", "180d", "365d"]
 
 export async function getProgramTvl(programId: string, resolution: string) {
     if (!allowedResolutions.includes(resolution)) {

@@ -43,7 +43,7 @@ Convert the following endpoints into charting commands
     - [x] Backend function
 - [ ] Ranking
     - [x] Backend function
-- [ ] Programs Details
+- [x] Programs Details
     - [x] Backend function
 - [ ] Program Active Users
     - [x] Backend function

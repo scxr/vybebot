@@ -12,7 +12,7 @@ const defaultConfig: ProgramTvlConfig = {
     resolution: "1d"
 };
 
-const allowedResolutions = ["1d", "7d", "30d", "90d", "180d", "365d"];
+const allowedResolutions = ["1h", "6h", "12h", "1d", "7d", "30d"];
 const waitingForInput = new Map<number, { type: 'program_id', messageId: number, originalMessageId: number }>();
 
 export async function getProgramTvlCommand(ctx: Context, step: string | null) {
@@ -26,14 +26,14 @@ export async function getProgramTvlCommand(ctx: Context, step: string | null) {
                         {text: "Clear Program ID", callback_data: "tvl_clear_id"}
                     ],
                     [
+                        {text: "1h", callback_data: "tvl_res_1h"},
+                        {text: "6h", callback_data: "tvl_res_6h"},
+                        {text: "12h", callback_data: "tvl_res_12h"}
+                    ],
+                    [
                         {text: "1d", callback_data: "tvl_res_1d"},
                         {text: "7d", callback_data: "tvl_res_7d"},
                         {text: "30d", callback_data: "tvl_res_30d"}
-                    ],
-                    [
-                        {text: "90d", callback_data: "tvl_res_90d"},
-                        {text: "180d", callback_data: "tvl_res_180d"},
-                        {text: "365d", callback_data: "tvl_res_365d"}
                     ],
                     [
                         {text: "🔍 Search", callback_data: "tvl_search"},
@@ -86,14 +86,14 @@ export async function handleTextMessage(ctx: Context) {
                                 {text: "Clear Program ID", callback_data: "tvl_clear_id"}
                             ],
                             [
+                                {text: "1h", callback_data: "tvl_res_1h"},
+                                {text: "6h", callback_data: "tvl_res_6h"},
+                                {text: "12h", callback_data: "tvl_res_12h"}
+                            ],
+                            [
                                 {text: "1d", callback_data: "tvl_res_1d"},
                                 {text: "7d", callback_data: "tvl_res_7d"},
                                 {text: "30d", callback_data: "tvl_res_30d"}
-                            ],
-                            [
-                                {text: "90d", callback_data: "tvl_res_90d"},
-                                {text: "180d", callback_data: "tvl_res_180d"},
-                                {text: "365d", callback_data: "tvl_res_365d"}
                             ],
                             [
                                 {text: "🔍 Search", callback_data: "tvl_search"},
@@ -130,14 +130,14 @@ export async function handleTvlCallback(ctx: Context, callbackData: string) {
                                     {text: "Clear Program ID", callback_data: "tvl_clear_id"}
                                 ],
                                 [
+                                    {text: "1h", callback_data: "tvl_res_1h"},
+                                    {text: "6h", callback_data: "tvl_res_6h"},
+                                    {text: "12h", callback_data: "tvl_res_12h"}
+                                ],
+                                [
                                     {text: "1d", callback_data: "tvl_res_1d"},
                                     {text: "7d", callback_data: "tvl_res_7d"},
                                     {text: "30d", callback_data: "tvl_res_30d"}
-                                ],
-                                [
-                                    {text: "90d", callback_data: "tvl_res_90d"},
-                                    {text: "180d", callback_data: "tvl_res_180d"},
-                                    {text: "365d", callback_data: "tvl_res_365d"}
                                 ],
                                 [
                                     {text: "🔍 Search", callback_data: "tvl_search"},
@@ -181,14 +181,14 @@ export async function handleTvlCallback(ctx: Context, callbackData: string) {
                                     {text: "Clear Program ID", callback_data: "tvl_clear_id"}
                                 ],
                                 [
+                                    {text: "1h", callback_data: "tvl_res_1h"},
+                                    {text: "6h", callback_data: "tvl_res_6h"},
+                                    {text: "12h", callback_data: "tvl_res_12h"}
+                                ],
+                                [
                                     {text: "1d", callback_data: "tvl_res_1d"},
                                     {text: "7d", callback_data: "tvl_res_7d"},
                                     {text: "30d", callback_data: "tvl_res_30d"}
-                                ],
-                                [
-                                    {text: "90d", callback_data: "tvl_res_90d"},
-                                    {text: "180d", callback_data: "tvl_res_180d"},
-                                    {text: "365d", callback_data: "tvl_res_365d"}
                                 ],
                                 [
                                     {text: "🔍 Search", callback_data: "tvl_search"},
@@ -212,6 +212,7 @@ export async function handleTvlCallback(ctx: Context, callbackData: string) {
                     parse_mode: "HTML",
                 });
             } catch (error) {
+                console.log(error)
                 await ctx.reply("Failed to fetch TVL data. Please check the program ID and try again.");
             }
             break;
@@ -220,15 +221,23 @@ export async function handleTvlCallback(ctx: Context, callbackData: string) {
 
 function buildTvlDetails(data: ProgramTvl) {
     let message = `<u>Program TVL Details</u>\n\n`;
-    message += `<b>Program ID:</b> <code>${data.programId}</code>\n`;
+    message += `<b>Program ID:</b> <code>${defaultConfig.programId}</code>\n`;
     message += `<b>Resolution:</b> ${defaultConfig.resolution}\n\n`;
+
+    
     
     if (data.data && data.data.length > 0) {
+        let startTvl = data.data[0].tvl;
+        let endTvl = data.data[data.data.length - 1].tvl;
+        let change = Number(endTvl) - Number(startTvl);
+        let changePercent = (change / Number(startTvl)) * 100;
         message += `<b>TVL History:</b>\n`;
         data.data.forEach(point => {
-            const date = new Date(point.timestamp).toLocaleDateString();
-            message += `${date}: <code>${point.tvl.toFixed(2)} SOL</code>\n`;
+            const date = new Date(point.time).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+            message += `${date}: <code>${Number(point.tvl).toFixed(2)} SOL</code>\n`;
         });
+
+        message += `\n\n<b>TVL Change:</b> <code>${change.toFixed(2)} SOL</code> (${changePercent.toFixed(2)}%)\n`;
     } else {
         message += "No TVL data available for this period.";
     }

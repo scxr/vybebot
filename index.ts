@@ -42,6 +42,7 @@ bot.command("chart", (ctx: Context) => {
 });
 
 bot.command("program_details", (ctx: Context) => {
+    // tested
     getProgramDetailsCommand(ctx, null);
 });
 
@@ -58,6 +59,7 @@ bot.command("program_active_users", (ctx: Context) => {
 });
 
 bot.command("program_list", (ctx: Context) => {
+    // tested
     getProgramListCommand(ctx, null);
 });
 
