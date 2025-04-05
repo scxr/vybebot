@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { createAndSaveChart } from '../functions/charting';
+import { createAndSaveChart } from '../functions/tokenFuncs/charting';
 
 interface ChartConfig {
     tokenAddress: string;

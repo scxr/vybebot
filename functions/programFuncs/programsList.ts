@@ -15,7 +15,8 @@ export async function getProgramsList(labels: string[] | null, sortBy: string | 
         },
     })
     let data = await response.json()
+    console.log(data)
     return data as any[]
 }
 
-getProgramsList(["defi"], null)   
+// getProgramsList(["defi"], null)   

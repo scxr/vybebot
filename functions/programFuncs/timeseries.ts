@@ -1,4 +1,4 @@
-export async function getIcTs(programId: string, range: string, type: string ) {
+export async function getTimeseries(programId: string, range: string, type: string ) {
     let url = ""
     if (type == "ic") {
         url = `https://api.vybenetwork.xyz/program/${programId}/instructions-count-ts?range=${range}`
@@ -21,4 +21,4 @@ export async function getIcTs(programId: string, range: string, type: string ) {
     return data as any[]
 }
 
-getIcTs("T1pyyaTNZsKv2WcRAB8oVnk93mLJw2XzjtVYqCsaHqt", "1d", "ic")
+// getTimeseries("T1pyyaTNZsKv2WcRAB8oVnk93mLJw2XzjtVYqCsaHqt", "1d", "ic")

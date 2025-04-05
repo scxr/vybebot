@@ -19,4 +19,4 @@ export async function getProgramTvl(programId: string, resolution: string) {
     return data as ProgramTvl
 }
 
-getProgramTvl("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK", "1d")
+// getProgramTvl("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK", "1d")

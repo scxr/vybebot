@@ -55,7 +55,7 @@ Convert the following endpoints into charting commands
     - [x] Backend function
 - [ ] Program TVL
     - [x] Backend function
-- [ ] Programs List
+- [x] Programs List
     - [x] Backend function
 
 ### Tokens

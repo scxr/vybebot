@@ -18,4 +18,4 @@ export async function getProgramActiveUsers(programId: string, days: number | nu
     return data
 }
 
-getProgramActiveUsers("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK", null, null)
+// getProgramActiveUsers("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK", null, null)
