@@ -11,7 +11,7 @@ export async function getProgramDetails(programId: string): Promise<ProgramDetai
         },
     })
     let data = await response.json()
-    // console.log(data)
+    console.log(data)
     return data as ProgramDetails
 }
 

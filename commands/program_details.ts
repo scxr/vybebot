@@ -152,11 +152,8 @@ function buildProgramDetails(data: ProgramDetails) {
     return `<u>Program Details</u>
 
 <b>Program ID:</b> <code>${data.programId}</code>
-<b>Name:</b> ${data.name || "N/A"}
-<b>Description:</b> ${data.description || "N/A"}
-<b>Website:</b> ${data.website || "N/A"}
-<b>Twitter:</b> ${data.twitter || "N/A"}
-<b>Discord:</b> ${data.discord || "N/A"}
-<b>Category:</b> ${data.category || "N/A"}
-<b>Subcategory:</b> ${data.subcategory || "N/A"}`;
+<b>Name:</b> <code>${data.name || "N/A"}</code>
+<b>Labels:</b> <code>${data.labels?.join(", ") || "N/A"}</code>
+<b>About:</b> <code>${data.programDescription || "N/A"}</code>
+<b>Daily Txs:</b> <code>${data.transactions1d || "N/A"}</code>`;
 } 

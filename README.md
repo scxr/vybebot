@@ -53,7 +53,7 @@ Convert the following endpoints into charting commands
     - [x] Backend function
 - [ ] Transaction Count: Time Series
     - [x] Backend function
-- [ ] Program TVL
+- [x] Program TVL
     - [x] Backend function
 - [x] Programs List
     - [x] Backend function
