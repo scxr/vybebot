@@ -150,14 +150,14 @@ export async function handleKnownAccountsCallback(ctx: Context, callbackData: st
 
 function buildKnownAccountsDetails(data: KnownAccounts) {
     let message = `<u>Known Accounts</u>\n\n`;
-    message += `<b>Program ID:</b> <code>${data.programId}</code>\n\n`;
+    message += `<b>Program ID:</b> <code>${defaultConfig.programId}</code>\n\n`;
     
-    if (data.accounts && data.accounts.length > 0) {
+    if (data.programs && data.programs.length > 0) {
         message += `<b>Accounts:</b>\n`;
-        data.accounts.forEach(account => {
+        data.programs.forEach(account => {
             message += `<b>${account.name}:</b>\n`;
-            message += `<code>${account.address}</code>\n`;
-            if (account.description) message += `${account.description}\n`;
+            message += `<code>${account.programId}</code>\n`;
+            if (account.programDescription) message += `${account.programDescription}\n`;
             message += "\n";
         });
     } else {

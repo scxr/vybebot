@@ -1,30 +1,30 @@
 import { Context } from "telegraf";
 import { getProgramRankings } from "../functions/programFuncs/programRankings";
-import { ProgramRankings } from "../types/ApiResponses";
+import { ProgramRanking, ProgramRankingData } from "../types/ApiResponses";
 
 interface ProgramRankingsConfig {
-    sortBy: string;
+    interval: string;
     limit: number;
 }
 
 const defaultConfig: ProgramRankingsConfig = {
-    sortBy: "tvl",
+    interval: "1d",
     limit: 10
 };
 
-const allowedSortBy = ["tvl", "volume", "users"];
+const allowedIntervals = ["1d", "7d", "30d"];
 const waitingForInput = new Map<number, { type: 'limit', messageId: number, originalMessageId: number }>();
 
 export async function getProgramRankingsCommand(ctx: Context, step: string | null) {
     if (step === null) {
-        await ctx.reply(`__Program Rankings__\n\nSort by: ${defaultConfig.sortBy}\nLimit: ${defaultConfig.limit}`, {
+        await ctx.reply(`__Program Rankings__\n\nInterval: ${defaultConfig.interval}\nLimit: ${defaultConfig.limit}`, {
             parse_mode: "Markdown",
             reply_markup: {
                 inline_keyboard: [
                     [
-                        {text: `${defaultConfig.sortBy === "tvl" ? "✅" : ""} TVL`, callback_data: "rank_sort_tvl"},
-                        {text: `${defaultConfig.sortBy === "volume" ? "✅" : ""} Volume`, callback_data: "rank_sort_volume"},
-                        {text: `${defaultConfig.sortBy === "users" ? "✅" : ""} Users`, callback_data: "rank_sort_users"}
+                        {text: `${defaultConfig.interval === "1d" ? "✅" : ""} 1 Day`, callback_data: "rank_interval_1d"},
+                        {text: `${defaultConfig.interval === "7d" ? "✅" : ""} 1 Week`, callback_data: "rank_interval_7d"},
+                        {text: `${defaultConfig.interval === "30d" ? "✅" : ""} 1 Month`, callback_data: "rank_interval_30d"}
                     ],
                     [
                         {text: "Set Limit", callback_data: "rank_set_limit"},
@@ -75,15 +75,15 @@ export async function handleTextMessage(ctx: Context) {
                 ctx.chat.id,
                 waiting.originalMessageId,
                 undefined,
-                `__Program Rankings__\n\nSort by: ${defaultConfig.sortBy}\nLimit: ${defaultConfig.limit}`,
+                `__Program Rankings__\n\nInterval: ${defaultConfig.interval}\nLimit: ${defaultConfig.limit}`,
                 {
                     parse_mode: "Markdown",
                     reply_markup: {
                         inline_keyboard: [
                             [
-                                {text: `${defaultConfig.sortBy === "tvl" ? "✅" : ""} TVL`, callback_data: "rank_sort_tvl"},
-                                {text: `${defaultConfig.sortBy === "volume" ? "✅" : ""} Volume`, callback_data: "rank_sort_volume"},
-                                {text: `${defaultConfig.sortBy === "users" ? "✅" : ""} Users`, callback_data: "rank_sort_users"}
+                                {text: `${defaultConfig.interval === "1d" ? "✅" : ""} 1 Day`, callback_data: "rank_interval_1d"},
+                                {text: `${defaultConfig.interval === "7d" ? "✅" : ""} 1 Week`, callback_data: "rank_interval_7d"},
+                                {text: `${defaultConfig.interval === "30d" ? "✅" : ""} 1 Month`, callback_data: "rank_interval_30d"}
                             ],
                             [
                                 {text: "Set Limit", callback_data: "rank_set_limit"},
@@ -107,21 +107,21 @@ export async function handleRankingsCallback(ctx: Context, callbackData: string)
     const userId = ctx.from?.id;
     if (!userId) return;
 
-    if (callbackData.startsWith("rank_sort_")) {
-        const sortBy = callbackData.replace("rank_sort_", "");
-        if (allowedSortBy.includes(sortBy)) {
-            defaultConfig.sortBy = sortBy;
+    if (callbackData.startsWith("rank_interval_")) {
+        const interval = callbackData.replace("rank_interval_", "");
+        if (allowedIntervals.includes(interval)) {
+            defaultConfig.interval = interval;
             if (ctx.callbackQuery?.message) {
                 await ctx.editMessageText(
-                    `__Program Rankings__\n\nSort by: ${defaultConfig.sortBy}\nLimit: ${defaultConfig.limit}`,
+                    `__Program Rankings__\n\nInterval: ${defaultConfig.interval}\nLimit: ${defaultConfig.limit}`,
                     {
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
-                                    {text: `${defaultConfig.sortBy === "tvl" ? "✅" : ""} TVL`, callback_data: "rank_sort_tvl"},
-                                    {text: `${defaultConfig.sortBy === "volume" ? "✅" : ""} Volume`, callback_data: "rank_sort_volume"},
-                                    {text: `${defaultConfig.sortBy === "users" ? "✅" : ""} Users`, callback_data: "rank_sort_users"}
+                                    {text: `${defaultConfig.interval === "1d" ? "✅" : ""} 1 Day`, callback_data: "rank_interval_1d"},
+                                    {text: `${defaultConfig.interval === "7d" ? "✅" : ""} 1 Week`, callback_data: "rank_interval_7d"},
+                                    {text: `${defaultConfig.interval === "30d" ? "✅" : ""} 1 Month`, callback_data: "rank_interval_30d"}
                                 ],
                                 [
                                     {text: "Set Limit", callback_data: "rank_set_limit"},
@@ -156,38 +156,30 @@ export async function handleRankingsCallback(ctx: Context, callbackData: string)
             
         case "rank_search":
             try {
-                const data = await getProgramRankings(defaultConfig.sortBy, defaultConfig.limit);
+                const data = await getProgramRankings(defaultConfig.interval, null);
                 await ctx.reply(buildRankingsDetails(data), {
                     parse_mode: "HTML",
                 });
             } catch (error) {
+                console.error('Failed to fetch program rankings:', error);
                 await ctx.reply("Failed to fetch program rankings. Please try again later.");
             }
             break;
     }
 }
 
-function buildRankingsDetails(data: ProgramRankings) {
+function buildRankingsDetails(data: ProgramRanking) {
+    console.log(data);
     let message = `<u>Program Rankings</u>\n\n`;
-    message += `<b>Sort by:</b> ${defaultConfig.sortBy}\n`;
+    message += `<b>Interval:</b> ${defaultConfig.interval}\n`;
     message += `<b>Showing top:</b> ${defaultConfig.limit}\n\n`;
-    
-    if (data.rankings && data.rankings.length > 0) {
-        data.rankings.forEach((program, index) => {
-            message += `${index + 1}. <b>${program.name || program.programId}</b>\n`;
-            message += `<code>${program.programId}</code>\n`;
+
+    if (data.data && data.data.length > 0) {
+        data.data.forEach((program: ProgramRankingData, index: number) => {
+            message += `${index + 1}. <b>${program.programName || program.programId}</b>\n`;
+            message += `Score: <code>${program.score}</code>\n`;
             
-            switch (defaultConfig.sortBy) {
-                case "tvl":
-                    message += `TVL: <code>${program.tvl.toFixed(2)} SOL</code>\n`;
-                    break;
-                case "volume":
-                    message += `Volume: <code>${program.volume.toFixed(2)} SOL</code>\n`;
-                    break;
-                case "users":
-                    message += `Users: <code>${program.users}</code>\n`;
-                    break;
-            }
+
             message += "\n";
         });
     } else {

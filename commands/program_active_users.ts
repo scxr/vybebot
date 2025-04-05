@@ -12,7 +12,7 @@ const defaultConfig: ProgramActiveUsersConfig = {
     resolution: "1d"
 };
 
-const allowedResolutions = ["1d", "7d", "30d", "90d", "180d", "365d"];
+const allowedResolutions = ["1d", "3d", "7d", "14d", "21d", "30d"];
 const waitingForInput = new Map<number, { type: 'program_id', messageId: number, originalMessageId: number }>();
 
 export async function getProgramActiveUsersCommand(ctx: Context, step: string | null) {
@@ -27,13 +27,13 @@ export async function getProgramActiveUsersCommand(ctx: Context, step: string | 
                     ],
                     [
                         {text: "1d", callback_data: "users_res_1d"},
-                        {text: "7d", callback_data: "users_res_7d"},
-                        {text: "30d", callback_data: "users_res_30d"}
+                        {text: "3d", callback_data: "users_res_3d"},
+                        {text: "7d", callback_data: "users_res_7d"}
                     ],
                     [
-                        {text: "90d", callback_data: "users_res_90d"},
-                        {text: "180d", callback_data: "users_res_180d"},
-                        {text: "365d", callback_data: "users_res_365d"}
+                        {text: "14d", callback_data: "users_res_14d"},
+                        {text: "21d", callback_data: "users_res_21d"},
+                        {text: "30d", callback_data: "users_res_30d"}
                     ],
                     [
                         {text: "🔍 Search", callback_data: "users_search"},
@@ -87,13 +87,13 @@ export async function handleTextMessage(ctx: Context) {
                             ],
                             [
                                 {text: "1d", callback_data: "users_res_1d"},
-                                {text: "7d", callback_data: "users_res_7d"},
-                                {text: "30d", callback_data: "users_res_30d"}
+                                {text: "3d", callback_data: "users_res_3d"},
+                                {text: "7d", callback_data: "users_res_7d"}
                             ],
                             [
-                                {text: "90d", callback_data: "users_res_90d"},
-                                {text: "180d", callback_data: "users_res_180d"},
-                                {text: "365d", callback_data: "users_res_365d"}
+                                {text: "14d", callback_data: "users_res_14d"},
+                                {text: "21d", callback_data: "users_res_21d"},
+                                {text: "30d", callback_data: "users_res_30d"}
                             ],
                             [
                                 {text: "🔍 Search", callback_data: "users_search"},
@@ -131,13 +131,13 @@ export async function handleActiveUsersCallback(ctx: Context, callbackData: stri
                                 ],
                                 [
                                     {text: "1d", callback_data: "users_res_1d"},
-                                    {text: "7d", callback_data: "users_res_7d"},
-                                    {text: "30d", callback_data: "users_res_30d"}
+                                    {text: "3d", callback_data: "users_res_3d"},
+                                    {text: "7d", callback_data: "users_res_7d"}
                                 ],
                                 [
-                                    {text: "90d", callback_data: "users_res_90d"},
-                                    {text: "180d", callback_data: "users_res_180d"},
-                                    {text: "365d", callback_data: "users_res_365d"}
+                                    {text: "14d", callback_data: "users_res_14d"},
+                                    {text: "21d", callback_data: "users_res_21d"},
+                                    {text: "30d", callback_data: "users_res_30d"}
                                 ],
                                 [
                                     {text: "🔍 Search", callback_data: "users_search"},
@@ -182,13 +182,13 @@ export async function handleActiveUsersCallback(ctx: Context, callbackData: stri
                                 ],
                                 [
                                     {text: "1d", callback_data: "users_res_1d"},
-                                    {text: "7d", callback_data: "users_res_7d"},
-                                    {text: "30d", callback_data: "users_res_30d"}
+                                    {text: "3d", callback_data: "users_res_3d"},
+                                    {text: "7d", callback_data: "users_res_7d"}
                                 ],
                                 [
-                                    {text: "90d", callback_data: "users_res_90d"},
-                                    {text: "180d", callback_data: "users_res_180d"},
-                                    {text: "365d", callback_data: "users_res_365d"}
+                                    {text: "14d", callback_data: "users_res_14d"},
+                                    {text: "21d", callback_data: "users_res_21d"},
+                                    {text: "30d", callback_data: "users_res_30d"}
                                 ],
                                 [
                                     {text: "🔍 Search", callback_data: "users_search"},
@@ -207,27 +207,30 @@ export async function handleActiveUsersCallback(ctx: Context, callbackData: stri
             }
 
             try {
-                const data = await getProgramActiveUsers(defaultConfig.programId, defaultConfig.resolution);
+                const data = await getProgramActiveUsers(defaultConfig.programId, defaultConfig.resolution, null);
                 await ctx.reply(buildActiveUsersDetails(data), {
                     parse_mode: "HTML",
+                    link_preview_options: {
+                        is_disabled: true
+                    }
                 });
             } catch (error) {
+                console.error('Failed to fetch active users data:', error);
                 await ctx.reply("Failed to fetch active users data. Please check the program ID and try again.");
             }
             break;
     }
 }
 
-function buildActiveUsersDetails(data: ProgramActiveUsers) {
-    let message = `<u>Program Active Users</u>\n\n`;
-    message += `<b>Program ID:</b> <code>${data.programId}</code>\n`;
+function buildActiveUsersDetails(dataInit: ProgramActiveUsers) {
+    let message = `<u>Programs Active Users</u>\n\n`;
+    message += `<b>Program ID:</b> <code>${defaultConfig.programId}</code>\n`;
     message += `<b>Resolution:</b> ${defaultConfig.resolution}\n\n`;
-    
-    if (data.data && data.data.length > 0) {
-        message += `<b>Active Users History:</b>\n`;
-        data.data.forEach(point => {
-            const date = new Date(point.timestamp).toLocaleDateString();
-            message += `${date}: <code>${point.activeUsers}</code> users\n`;
+    let data = dataInit.data.slice(0, 20)
+    if (data && data.length > 0) {
+        message += `<b>Top 20 Active Users</b>\n`;
+        data.forEach((point: { wallet: string; transactions: number }) => {
+            message += `<a href="https://solscan.io/address/${point.wallet}">${point.wallet.substring(0, 4)}...${point.wallet.substring(point.wallet.length - 4)}</a>: <code>${point.transactions}</code> txs\n`;
         });
     } else {
         message += "No active users data available for this period.";

@@ -1,6 +1,6 @@
 import { Context } from "telegraf";
 import { getTimeseries } from "../functions/programFuncs/timeseries";
-import { Timeseries } from "../types/ApiResponses";
+import { ProgramTimeseries } from "../types/ApiResponses";
 
 interface TimeseriesConfig {
     programId: string;
@@ -10,12 +10,12 @@ interface TimeseriesConfig {
 
 const defaultConfig: TimeseriesConfig = {
     programId: "",
-    metric: "tvl",
+    metric: "ic",
     resolution: "1d"
 };
 
-const allowedMetrics = ["tvl", "volume", "users"];
-const allowedResolutions = ["1d", "7d", "30d", "90d", "180d", "365d"];
+const allowedMetrics = ["ic", "tc", "au"];
+const allowedResolutions = ["1d", "3d", "7d", "14d", "21d", "30d"];
 const waitingForInput = new Map<number, { type: 'program_id', messageId: number, originalMessageId: number }>();
 
 export async function getTimeseriesCommand(ctx: Context, step: string | null) {
@@ -29,19 +29,19 @@ export async function getTimeseriesCommand(ctx: Context, step: string | null) {
                         {text: "Clear Program ID", callback_data: "ts_clear_id"}
                     ],
                     [
-                        {text: `${defaultConfig.metric === "tvl" ? "✅" : ""} TVL`, callback_data: "ts_metric_tvl"},
-                        {text: `${defaultConfig.metric === "volume" ? "✅" : ""} Volume`, callback_data: "ts_metric_volume"},
-                        {text: `${defaultConfig.metric === "users" ? "✅" : ""} Users`, callback_data: "ts_metric_users"}
+                        {text: `${defaultConfig.metric === "ic" ? "✅" : ""} IC`, callback_data: "ts_metric_ic"},
+                        {text: `${defaultConfig.metric === "tc" ? "✅" : ""} TC`, callback_data: "ts_metric_tc"},
+                        {text: `${defaultConfig.metric === "au" ? "✅" : ""} AU`, callback_data: "ts_metric_au"}
                     ],
                     [
                         {text: "1d", callback_data: "ts_res_1d"},
-                        {text: "7d", callback_data: "ts_res_7d"},
-                        {text: "30d", callback_data: "ts_res_30d"}
+                        {text: "3d", callback_data: "ts_res_3d"},
+                        {text: "7d", callback_data: "ts_res_7d"}
                     ],
                     [
-                        {text: "90d", callback_data: "ts_res_90d"},
-                        {text: "180d", callback_data: "ts_res_180d"},
-                        {text: "365d", callback_data: "ts_res_365d"}
+                        {text: "14d", callback_data: "ts_res_14d"},
+                        {text: "21d", callback_data: "ts_res_21d"},
+                        {text: "30d", callback_data: "ts_res_30d"}
                     ],
                     [
                         {text: "🔍 Search", callback_data: "ts_search"},
@@ -94,19 +94,19 @@ export async function handleTextMessage(ctx: Context) {
                                 {text: "Clear Program ID", callback_data: "ts_clear_id"}
                             ],
                             [
-                                {text: `${defaultConfig.metric === "tvl" ? "✅" : ""} TVL`, callback_data: "ts_metric_tvl"},
-                                {text: `${defaultConfig.metric === "volume" ? "✅" : ""} Volume`, callback_data: "ts_metric_volume"},
-                                {text: `${defaultConfig.metric === "users" ? "✅" : ""} Users`, callback_data: "ts_metric_users"}
+                                {text: `${defaultConfig.metric === "ic" ? "✅" : ""} IC`, callback_data: "ts_metric_ic"},
+                                {text: `${defaultConfig.metric === "tc" ? "✅" : ""} TC`, callback_data: "ts_metric_tc"},
+                                {text: `${defaultConfig.metric === "au" ? "✅" : ""} AU`, callback_data: "ts_metric_au"}
                             ],
                             [
                                 {text: "1d", callback_data: "ts_res_1d"},
-                                {text: "7d", callback_data: "ts_res_7d"},
-                                {text: "30d", callback_data: "ts_res_30d"}
+                                {text: "3d", callback_data: "ts_res_3d"},
+                                {text: "7d", callback_data: "ts_res_7d"}
                             ],
                             [
-                                {text: "90d", callback_data: "ts_res_90d"},
-                                {text: "180d", callback_data: "ts_res_180d"},
-                                {text: "365d", callback_data: "ts_res_365d"}
+                                {text: "14d", callback_data: "ts_res_14d"},
+                                {text: "21d", callback_data: "ts_res_21d"},
+                                {text: "30d", callback_data: "ts_res_30d"}
                             ],
                             [
                                 {text: "🔍 Search", callback_data: "ts_search"},
@@ -173,11 +173,12 @@ export async function handleTimeseriesCallback(ctx: Context, callbackData: strin
             }
 
             try {
-                const data = await getTimeseries(defaultConfig.programId, defaultConfig.metric, defaultConfig.resolution);
-                await ctx.reply(buildTimeseriesDetails(data), {
+                const data = await getTimeseries(defaultConfig.programId, defaultConfig.resolution, defaultConfig.metric);
+                await ctx.reply(buildTimeseriesDetails(data as ProgramTimeseries), {
                     parse_mode: "HTML",
                 });
             } catch (error) {
+                console.error('Failed to fetch timeseries data:', error);
                 await ctx.reply("Failed to fetch timeseries data. Please check the program ID and try again.");
             }
             break;
@@ -197,19 +198,19 @@ async function updateTimeseriesMessage(ctx: Context) {
                             {text: "Clear Program ID", callback_data: "ts_clear_id"}
                         ],
                         [
-                            {text: `${defaultConfig.metric === "tvl" ? "✅" : ""} TVL`, callback_data: "ts_metric_tvl"},
-                            {text: `${defaultConfig.metric === "volume" ? "✅" : ""} Volume`, callback_data: "ts_metric_volume"},
-                            {text: `${defaultConfig.metric === "users" ? "✅" : ""} Users`, callback_data: "ts_metric_users"}
+                            {text: `${defaultConfig.metric === "ic" ? "✅" : ""} IC`, callback_data: "ts_metric_ic"},
+                            {text: `${defaultConfig.metric === "tc" ? "✅" : ""} TC`, callback_data: "ts_metric_tc"},
+                            {text: `${defaultConfig.metric === "au" ? "✅" : ""} AU`, callback_data: "ts_metric_au"}
                         ],
                         [
                             {text: "1d", callback_data: "ts_res_1d"},
-                            {text: "7d", callback_data: "ts_res_7d"},
-                            {text: "30d", callback_data: "ts_res_30d"}
+                            {text: "3d", callback_data: "ts_res_3d"},
+                            {text: "7d", callback_data: "ts_res_7d"}
                         ],
                         [
-                            {text: "90d", callback_data: "ts_res_90d"},
-                            {text: "180d", callback_data: "ts_res_180d"},
-                            {text: "365d", callback_data: "ts_res_365d"}
+                            {text: "14d", callback_data: "ts_res_14d"},
+                            {text: "21d", callback_data: "ts_res_21d"},
+                            {text: "30d", callback_data: "ts_res_30d"}
                         ],
                         [
                             {text: "🔍 Search", callback_data: "ts_search"},
@@ -221,20 +222,29 @@ async function updateTimeseriesMessage(ctx: Context) {
     }
 }
 
-function buildTimeseriesDetails(data: Timeseries) {
+function buildTimeseriesDetails(data: ProgramTimeseries) {
     let message = `<u>Program Timeseries</u>\n\n`;
-    message += `<b>Program ID:</b> <code>${data.programId}</code>\n`;
+    message += `<b>Program ID:</b> <code>${defaultConfig.programId}</code>\n`;
     message += `<b>Metric:</b> ${defaultConfig.metric}\n`;
     message += `<b>Resolution:</b> ${defaultConfig.resolution}\n\n`;
     
     if (data.data && data.data.length > 0) {
         message += `<b>History:</b>\n`;
-        data.data.forEach(point => {
-            const date = new Date(point.timestamp).toLocaleDateString();
-            const value = point[defaultConfig.metric];
-            const formattedValue = typeof value === 'number' ? value.toFixed(2) : value;
-            message += `${date}: <code>${formattedValue}</code>${defaultConfig.metric === 'users' ? '' : ' SOL'}\n`;
-        });
+        let initData = data.data[0]
+        let initDate = new Date(initData.blockTime * 1000).toLocaleDateString();
+        let metricName = defaultConfig.metric === "ic" ? "instructionsCount" : defaultConfig.metric === "tc" ? "transactionsCount" : "dau";
+        let initValue = initData[metricName];
+        let midPointData = data.data[Math.floor(data.data.length / 2)]
+        let midPointDate = new Date(midPointData.blockTime * 1000).toLocaleDateString();
+        let midPointValue = midPointData[metricName];
+        let finalData = data.data[data.data.length - 1]
+        let finalDate = new Date(finalData.blockTime * 1000).toLocaleDateString();
+        let finalValue = finalData[metricName]; 
+        let unitName = defaultConfig.metric === "au" ? "Users" : defaultConfig.metric === "tc" ? "Transactions" : "Instructions";
+        message += `${initDate}: <code>${initValue}</code> ${unitName}\n`;
+        message += `${midPointDate}: <code>${midPointValue}</code> ${unitName}\n`;
+        message += `${finalDate}: <code>${finalValue}</code> ${unitName}\n`;
+        message += `\n<b>Trend:</b> ${finalValue - initValue} ${unitName} (${((finalValue - initValue) / initValue * 100).toFixed(2)}%)\n`;
     } else {
         message += "No data available for this period.";
     }

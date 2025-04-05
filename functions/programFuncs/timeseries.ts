@@ -1,5 +1,6 @@
 export async function getTimeseries(programId: string, range: string, type: string ) {
     let url = ""
+    console.log("TYPE: ", type)
     if (type == "ic") {
         url = `https://api.vybenetwork.xyz/program/${programId}/instructions-count-ts?range=${range}`
     } else if (type == "tc") {

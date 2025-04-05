@@ -1,11 +1,13 @@
 export async function getProgramActiveUsers(programId: string, days: number | null, sortBy: string | null) {
-    let url = `https://api.vybenetwork.xyz/program/${programId}/active-users?`
-    if (days !== null) {
-        url += `days=${days}&`
+    let url = `https://api.vybenetwork.xyz/program/${programId}/active-users`
+    if (days !== null && sortBy !== null) {
+        url += `?days=${days}&sortBy=${sortBy}`
+    } else if (days !== null) {
+        url += `?days=${days.toString().replace("d", "")}`
+    } else if (sortBy !== null) {
+        url += `?sortBy=${sortBy}`
     }
-    if (sortBy !== null) {
-        url += `sortBy=${sortBy}`
-    }
+    console.log("URL", url)
     let response = await fetch(url, {
         headers: {
             'x-api-key': `${process.env.VYBE_API_KEY}`,
@@ -13,8 +15,9 @@ export async function getProgramActiveUsers(programId: string, days: number | nu
             'Accept': 'application/json'
         },
     })
+    console.log("RESPONSE", response.status)
     let data = await response.json()
-    // console.log(data)
+    console.log("DATA", data)
     return data
 }
 

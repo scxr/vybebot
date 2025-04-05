@@ -235,3 +235,120 @@ export interface ProgramTvlDatapoint {
 export interface ProgramTvl {
     data: ProgramTvlDatapoint[];
 }
+
+export interface ProgramTimeseries {
+    data: any[];
+}
+
+export interface TokenDetails {
+    symbol: string;
+    name: string;
+    mintAddress: string;
+    price: number;
+    price1d: number;
+    price7d: number;
+    decimal: number;
+    logoUrl: string;
+    category: string;
+    subcategory: string;
+    verified: boolean;
+    updateTime: number;
+    currentSupply: number;
+    marketCap: number;
+    tokenAmountVolume24h: number;
+    usdValueVolume24h: number;
+}
+
+export interface TokenHolders {
+    data: TokenHolder[];
+}
+
+export interface TokenHolder {
+    rank: number;
+    ownerAddress: string;
+    ownerName: string | null;
+    ownerLogoUrl: string | null;
+    tokenMint: string;
+    tokenSymbol: string | null;
+    tokenLogoUrl: string | null;
+    balance: string;
+    valueUsd: string;
+    percentageOfSupplyHeld: number;
+}
+
+export interface InstructionsData {
+    data: InstructionName[];
+}
+
+export interface InstructionName {
+    callingInstructions: number[];
+    ixName: string;
+    callingProgram: string;
+    programName: string;
+}
+
+export interface TokenTimeseriesDataVolume {
+    timeBucketStart: number;
+    volume: number;
+    count: number;
+}
+
+export interface TokenTimeseriesDataHolders {
+    timestamp: number;
+    nHolders: number;
+}
+
+export interface TokenTimeseries {
+    data: (TokenTimeseriesDataVolume | TokenTimeseriesDataHolders)[];
+}
+
+export interface TokenTrades {
+    data: TokenTrade[];
+}
+
+export interface TokenTrade {
+    authorityAddress: string;
+    blockTime: number;
+    iixOrdinal: number;
+    baseMintAddress: string;
+    interIxOrdinal: number;
+    ixOrdinal: number;
+    marketId: string;
+    quoteMintAddress: string;
+    price: string;
+    programId: string;
+    signature: string;
+    slot: number;
+    txIndex: number;
+    fee: string;
+    feePayer: string;
+    baseSize: string;
+    quoteSize: string;
+}
+
+export interface TokenTransfers {
+    transfers: TokenTransfer[];
+}
+
+export interface TokenTransfer {
+    signature: string;
+    callingMetadata: {
+        callingInstructions: number[];
+        ixName: string;
+        callingProgram: string;
+        programName: string;
+    }[] | any;
+    senderTokenAccount: string;
+    senderAddress: string;
+    receiverTokenAccount: string;
+    receiverAddress: string;
+    mintAddress: string;
+    feePayer: string;
+    decimal: number;
+    amount: number;
+    slot: number;
+    blockTime: number;
+    price: string;
+    calculatedAmount: string;
+    valueUsd: string;
+}

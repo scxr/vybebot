@@ -39,19 +39,19 @@ Convert the following endpoints into charting commands
 
 ### Programs
 
-- [ ] Known Program Accounts
+- [x] Known Program Accounts
     - [x] Backend function
-- [ ] Ranking
+- [x] Ranking
     - [x] Backend function
 - [x] Programs Details
     - [x] Backend function
-- [ ] Program Active Users
+- [x] Program Active Users
     - [x] Backend function
-- [ ] Active Users: Time Series
+- [x] Active Users: Time Series
     - [x] Backend function
-- [ ] Instruction Count: Time Series
+- [x] Instruction Count: Time Series
     - [x] Backend function
-- [ ] Transaction Count: Time Series
+- [x] Transaction Count: Time Series
     - [x] Backend function
 - [x] Program TVL
     - [x] Backend function
@@ -60,11 +60,17 @@ Convert the following endpoints into charting commands
 
 ### Tokens
 
-- [ ] Instruction Names
-- [ ] Token Trades
-- [ ] Token Transfers
-- [ ] Token Details
-- [ ] Token Holders Time Series
-- [ ] Top Token Holders
-- [ ] Token Volume Time Series
-- [ ] Tokens
+- [x] Instruction Names
+    - [x] Backend function
+- [x] Token Trades
+    - [x] Backend function
+- [x] Token Transfers
+    - [x] Backend function
+- [x] Token Details
+    - [x] Backend function
+- [x] Token Holders Time Series
+    - [x] Backend function
+- [x] Top Token Holders
+    - [x] Backend function
+- [x] Token Volume Time Series
+    - [x] Backend function
