@@ -63,7 +63,7 @@ bot.command("program_rankings", (ctx: Context) => {
     getProgramRankingsCommand(ctx, null);
 });
 
-bot.command("program_active_users", (ctx: Context) => {
+bot.command("program_dau", (ctx: Context) => {
     // tested
     getProgramActiveUsersCommand(ctx, null);
 });
@@ -73,7 +73,7 @@ bot.command("program_list", (ctx: Context) => {
     getProgramListCommand(ctx, null);
 });
 
-bot.command("program_timeseries", (ctx: Context) => {
+bot.command("program_ts", (ctx: Context) => {
     // tested
     getTimeseriesCommand(ctx, null);
 });
@@ -83,30 +83,31 @@ bot.command("known_accounts", (ctx: Context) => {
     getKnownAccountsCommand(ctx, null);
 });
 
-bot.command("token_trades", (ctx: Context) => {
+bot.command("trades", (ctx: Context) => {
     // tested
     getTokenTradesCommand(ctx, null);
 });
 
-bot.command("token_transfers", (ctx: Context) => {
+bot.command("transfers", (ctx: Context) => {
     // tested
     getTokenTransfersCommand(ctx, null);
 });
 
-bot.command("token_timeseries", (ctx: Context) => {
+bot.command("timeseries", (ctx: Context) => {
     getTokenTimeseriesCommand(ctx, null);
 });
 
-bot.command("token_ix_names", (ctx: Context) => {
+bot.command("ix_names", (ctx: Context) => {
+    // tested
     getTokenIxNamesCommand(ctx, null);
 });
 
-bot.command("token_details", (ctx: Context) => {
+bot.command("details", (ctx: Context) => {
     // tested
     getTokenDetailsCommand(ctx, null);
 });
 
-bot.command("token_holders", (ctx: Context) => {
+bot.command("holders", (ctx: Context) => {
     // tested
     getTokenHoldersCommand(ctx, null);
 });
