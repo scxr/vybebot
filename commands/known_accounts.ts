@@ -137,8 +137,9 @@ export async function handleKnownAccountsCallback(ctx: Context, callbackData: st
             }
 
             try {
-                const data = await getKnownAccounts(defaultConfig.programId);
-                await ctx.reply(buildKnownAccountsDetails(data), {
+                const data = await getKnownAccounts(defaultConfig.programId, null, null, null, null, null);
+                
+                await ctx.reply(buildKnownAccountsDetails(data ), {
                     parse_mode: "HTML",
                 });
             } catch (error) {

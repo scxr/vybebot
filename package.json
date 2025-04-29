@@ -5,7 +5,7 @@
   "main": "chart_generator.ts",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node chart_generator.ts",
+    "start": "bun run index.ts",
     "dev": "bun run --watch index.ts"
   },
   "dependencies": {

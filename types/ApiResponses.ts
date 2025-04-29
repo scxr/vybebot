@@ -352,3 +352,28 @@ export interface TokenTransfer {
     calculatedAmount: string;
     valueUsd: string;
 }
+
+export interface KnownAccounts {
+    programs: {
+        name: string;
+        programId: string;
+        programDescription?: string;
+    }[];
+}
+
+export interface ProgramActiveUsers {
+    data: {
+        wallet: string;
+        transactions: number;
+    }[];
+}
+
+export interface ProgramsList {
+    data: {
+        programId: string;
+        friendlyName: string | null;
+        programDescription: string;
+        labels: string[];
+        dau: number;
+    }[];
+}

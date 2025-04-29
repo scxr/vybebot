@@ -1,3 +1,5 @@
+import { ProgramTimeseries } from "../../types/ApiResponses"
+
 export async function getTimeseries(programId: string, range: string, type: string ) {
     let url = ""
     console.log("TYPE: ", type)
@@ -19,7 +21,7 @@ export async function getTimeseries(programId: string, range: string, type: stri
     })
     let data = await response.json()
     console.log(data)
-    return data as any[]
+    return { data: data } as ProgramTimeseries  
 }
 
 // getTimeseries("T1pyyaTNZsKv2WcRAB8oVnk93mLJw2XzjtVYqCsaHqt", "1d", "ic")

@@ -1,3 +1,5 @@
+import { KnownAccounts } from "../../types/ApiResponses"
+
 export async function getKnownAccounts(
     programId: string | null,
     name: string | null,
@@ -34,7 +36,7 @@ export async function getKnownAccounts(
     })
     let data = await response.json()
     console.log(data)
-    return data as any[]
+    return { programs: data } as KnownAccounts
     
    
 }

@@ -207,7 +207,7 @@ export async function handleActiveUsersCallback(ctx: Context, callbackData: stri
             }
 
             try {
-                const data = await getProgramActiveUsers(defaultConfig.programId, defaultConfig.resolution, null);
+                const data = await getProgramActiveUsers(defaultConfig.programId, parseInt(defaultConfig.resolution), null);
                 await ctx.reply(buildActiveUsersDetails(data), {
                     parse_mode: "HTML",
                     link_preview_options: {

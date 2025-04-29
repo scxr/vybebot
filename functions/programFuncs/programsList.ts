@@ -1,3 +1,5 @@
+import { ProgramsList } from "../../types/ApiResponses"
+
 export async function getProgramsList(labels: string[] | null, sortBy: string | null) {
     let url = `https://api.vybenetwork.xyz/programs?`
     if (labels) {
@@ -16,7 +18,7 @@ export async function getProgramsList(labels: string[] | null, sortBy: string | 
     })
     let data = await response.json()
     console.log(data)
-    return data as any[]
+    return { data: data } as ProgramsList
 }
 
 // getProgramsList(["defi"], null)   
