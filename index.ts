@@ -68,7 +68,7 @@ bot.command("program_dau", (ctx: Context) => {
     getProgramActiveUsersCommand(ctx, null);
 });
 
-bot.command("program_list", (ctx: Context) => {
+bot.command("program_type", (ctx: Context) => {
     // tested
     getProgramListCommand(ctx, null);
 });

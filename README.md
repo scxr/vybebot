@@ -1,3 +1,18 @@
+# VybeBot
+
+VybeBot is a feature-rich Telegram bot that provides real-time Solana blockchain analytics and data through the Vybe Network API. Built with TypeScript and Bun, it offers a comprehensive suite of commands for tracking NFTs, tokens, programs, and wallet activities on the Solana blockchain.
+
+Key features include:
+- Wallet analytics (NFT balances, PNL, token balances)
+- NFT collection insights and holder statistics
+- Token market data and charts
+- Program analytics (TVL, daily active users, rankings)
+- Transaction and transfer monitoring
+- Time-series data visualization
+
+The bot is designed to be easily deployable and maintainable, with minimal dependencies (Telegraf for bot functionality and Canvas for chart generation). It runs seamlessly across Windows, WSL, and MacOS environments.
+
+
 ### Tools used
 
 - TypeScript has been the language of choice.
@@ -58,7 +73,6 @@ You can also edit the picture/name/about etc. its all relatively intuitive.
 
 - [x] NFT Balance for single wallet 
 - [x] NFT Balance for multiple wallets
-- [ ] Search known accounts
 - [x] A wallets PNL
 - [x] Token balances by time period
 - [x] Token balances now
@@ -70,8 +84,7 @@ You can also edit the picture/name/about etc. its all relatively intuitive.
 
 Convert the following endpoints into charting commands
 
-- [ ] Pair-OHLCV
-- [ ] Market-OHLCV
+
 - [x] Token-OHLCV
 
 
